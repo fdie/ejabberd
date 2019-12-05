@@ -116,7 +116,7 @@ node_id() ->
     Mod = get_mod(),
     Mod:node_id().
 
--spec get_node_by_id(binary()) -> node().
+-spec get_node_by_id(binary()) -> node() | undefined.
 get_node_by_id(ID) ->
     Mod = get_mod(),
     Mod:get_node_by_id(ID).

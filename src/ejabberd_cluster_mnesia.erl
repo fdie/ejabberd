@@ -103,12 +103,12 @@ leave([Master|_], Node) ->
 node_id() ->
     integer_to_binary(erlang:phash2(node())).
 
--spec get_node_by_id(binary()) -> node().
+-spec get_node_by_id(binary()) -> node() | undefined.
 get_node_by_id(Hash) ->
     try binary_to_integer(Hash) of
 	I -> match_node_id(I)
     catch _:_ ->
-        throw({badmatch, Hash})
+        undefined
     end.
 
 -spec send({atom(), node()}, term()) -> boolean().
@@ -140,7 +140,7 @@ replicate_database(Node) ->
             mnesia:add_table_copy(Table, node(), Type)
         end, mnesia:system_info(tables)--[schema]).
 
--spec match_node_id(integer()) -> node().
+-spec match_node_id(integer()) -> node() | undefined.
 match_node_id(I) ->
     match_node_id(I, get_nodes()).
 
@@ -150,5 +150,5 @@ match_node_id(I, [Node|Nodes]) ->
 	I -> Node;
 	_ -> match_node_id(I, Nodes)
     end;
-match_node_id(I, []) ->
-    throw({badmatch, I}).
+match_node_id(_I, []) ->
+    undefined.

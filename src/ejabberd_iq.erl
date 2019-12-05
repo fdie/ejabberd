@@ -158,10 +158,14 @@ decode_id(<<"rr-", ID/binary>>) ->
 	[CheckSum, NodeBin] = binary:split(Rest, <<"-">>),
 	CheckSum = calc_checksum(<<ExpireBin/binary, Rnd/binary, NodeBin/binary>>),
 	Node = ejabberd_cluster:get_node_by_id(NodeBin),
-	Expire = binary_to_integer(ExpireBin),
-	{ok, Expire, Rnd, Node}
+	case Node of
+	    undefined -> error;
+	    _ ->
+		Expire = binary_to_integer(ExpireBin),
+		{ok, Expire, Rnd, Node}
+	end
     catch _:{badmatch, _} ->
-	    error
+	error
     end;
 decode_id(_) ->
     error.
